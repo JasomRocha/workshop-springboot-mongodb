@@ -11,6 +11,8 @@ import com.jasomrocha.workshopmongo.dto.UserDTO;
 import com.jasomrocha.workshopmongo.repository.UserRepository;
 import com.jasomrocha.workshopmongo.services.exception.ObjectNotFoundException;
 
+
+
 @Service
 public class UserService {
 	@Autowired
@@ -28,11 +30,29 @@ public class UserService {
 	public User insert(User obj) {
 		return repo.insert(obj);
 	}
+	
 	public void delete(String id) {
 		findById(id);
 		repo.deleteById(id);
 	}
 	
+	public User update(User obj) {
+		Optional<User> userOptional = repo.findById(obj.getId());
+
+		if (userOptional.isPresent()) {
+	        User newObj = userOptional.get();
+	        updateData(newObj, obj);
+	        return repo.save(newObj);
+	    } else {
+	        return null; 
+	    }
+	}
+	
+	private void updateData(User newObj, User obj) {
+		newObj.setName(obj.getName());
+		newObj.setEmail(obj.getEmail());
+	}
+
 	public User fromDTO(UserDTO objDto) {
 		return new User(objDto.getId(), objDto.getName(), objDto.getEmail());
 	}
